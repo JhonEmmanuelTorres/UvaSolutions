@@ -1,7 +1,7 @@
 import java.util.Scanner;
 import java.math.BigInteger;
 
-class Main // codeforce poner public
+class Main 
 {
     public static void main(String[] args)
     {
