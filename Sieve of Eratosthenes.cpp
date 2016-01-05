@@ -11,10 +11,10 @@ void generePrimes( int n )
     vector<bool> sieve( n + 1, true );
     vector<int> primes;
     sieve[0] = sieve[1] = 0;
-    for( int i = 2; i < n; i++ )
+    for( int i = 2; i <= n; i++ )
         if( sieve[i] )
         {
-            for( int j = i * i; j < n; j+=i )
+            for( int j = i * i; j <= n; j+=i )
                 sieve[j] = 0;
             primes.push_back( i );
         }
