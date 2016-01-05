@@ -5,9 +5,9 @@
 
 using namespace std;
 
-bool isPrime( int n ) //
+bool isPrime( int n ) // O ( sqrt(n) / 2 )
 {
-    if( n % 2 == 0 ) return false;
+    if( n % 2 == 0 || n == 1 ) return false;
     int limit = (int)sqrt(n);
     for( int i = 3; i < limit; i+=2 )
         if( n % i == 0 )
