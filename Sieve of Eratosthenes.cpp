@@ -23,6 +23,24 @@ void generePrimes( int n )
     cout << endl;
 }
 
+vector<long> primesFactor( long n )
+{
+    vector<long> factors;
+    long i = 0;
+    long PF = primes[i];
+    while( PF * PF <= n )
+    {
+        while( n % PF == 0 )
+        {
+            n /= PF;
+            factors.push_back( PF );
+        }
+        PF = primes[ ++i ];
+    }
+    if( n != 1 ) factors.push_back( n );
+    return factors;
+}
+
 int main()
 {
     int n;
