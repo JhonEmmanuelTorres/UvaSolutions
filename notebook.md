@@ -124,14 +124,15 @@ void subsets(vi array, ll n) {
 * Sieve of Erastothenes
 
 ```c++
-const ll MAX_LENGTH = ll(1e7);
-bitset<ll> sieve;
+const ll MAX_N = ll(1e7);
+bitset<MAX_N> sieve;
 sieve.set(); // all bits in true
 vi primes;
-for (ll i = 2; i < MAX_LENGTH; i++)
+primes.reserve(MAX_N / log(MAX_N));
+for (ll i = 2; i < MAX_N; i++)
     if (sieve[i]) {
-        for (ll j = i * i; j < MAX_LENGTH; j += i)
-            sieve[i] = false;
+        for (ll j = i * i; j < MAX_N; j += i)
+            sieve[j] = false;
         primes.push_back(i);
     }
 ```
