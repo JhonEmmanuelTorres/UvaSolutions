@@ -3,7 +3,10 @@
 * Template
 
 ```c++
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
+#define all(x) x.begin(),x.end()
+#define ff first
+#define ss second
 
 using namespace std;
 
@@ -67,13 +70,13 @@ ll lowerBound(vi array, ll value) {
 
 ### Bit Manipulation
 
+|  X  |  Y  | X or Y | X & Y | X ^ Y |
+|:---:|:---:|:-----:|:-----:|:-----:|
+| 0   | 0   |    0  |   0   |    0  |
+| 0   | 1   |    1  |   0   |    1  |
+| 1   | 0   |    1  |   0   |    1  |
+| 1   | 1   |    1  |   1   |    0  |
 
- X | Y | (X \| Y)| (X & Y) | (X ^ Y)
----|---|---------|---------|---------   
- 0 | 0 |    0    |    0    |    0    
- 0 | 1 |    1    |    0    |    1    
- 1 | 0 |    1    |    0    |    1    
- 1 | 1 |    1    |    1    |    0    
 
 #### Aplications
 
@@ -99,7 +102,7 @@ void subsets(vi array, ll n) {
             if (i & (1 << j))
                 cout << array[j] << ' ';
         cout << '\n';
-    }   
+    }
 }
 ```
 
@@ -158,9 +161,9 @@ for (ll i = 2; i < MAX_N; i++)
     }
     ```
 
-    * Count the number of divisor of n
+    * Count the number of divisor of `n`
 
-    <!-- ```c++
+    ```c++
     ll numDiv(ll n) {
         ll power, answer = 1;
         for (ll pf: primes) {
@@ -178,11 +181,11 @@ for (ll i = 2; i < MAX_N; i++)
             answer *= 2;
         return answer;
     }
-    ``` -->
+    ```
 
-    * Sum of divisors of n
+    * Sum of divisors of `n`
 
-    <!-- ```c++
+    ```c++
     ll numDiv(ll n) {
         ll power, answer = 1;
         for (ll pf: primes) {
@@ -200,9 +203,9 @@ for (ll i = 2; i < MAX_N; i++)
             answer *= (pow(pf, 2) - 1) / (n - 1);
         return answer;
     }
-    ``` -->
+    ```
 
-    * Count the number of positive integers < N that are relatively prime to N.
+    * Count the number of positive integers < `n` that are relatively prime to `n`.
 
     ```c++
     ll eulerPhi(ll n) {
@@ -227,7 +230,7 @@ for (ll i = 2; i < MAX_N; i++)
     Pollard's rho can factor an integer `n` if `n` is a large prime or
     is one.
 
-    <!-- ```c++
+    ```c++
     ll mulmod(ll a, ll b, ll c) { // return (a * b) % c
         ll x = 0, y = a % c;
         while (b > 0) {
@@ -254,7 +257,7 @@ for (ll i = 2; i < MAX_N; i++)
             }
         }
     }
-    ``` -->
+    ```
 
 
 
@@ -366,3 +369,104 @@ public:
     }
 };
 ```
+
+
+# Graph
+
+* **Depth first search:** Return the number of component conected. It is important fill the `color` with
+"white"
+
+	* Recursive
+
+	```c++
+	ll dfs (vector<vi> graph, vector<string> &color, vector<ll> &path, ll node) {
+		ll totalMarquet = 1;
+		color[node] = "gray";
+		for (auto neighbor : graph[node])
+			if (color[neighbor] == "white") {
+				path[neighbor] = node;
+				totalMarquet += dfs(graph, color, path, neighbor);
+			}
+
+		color[node] = "black";
+		return totalMarquet;
+	}
+	```
+
+	* Iterative
+
+	```c++
+
+	ll dfs (vector<vi> graph, vector<string> &color, vector<ll> &path, ll initNode) {
+		ll node, totalMarquet = 1;
+		stack<ll> nodeList;
+		nodeList.push(initNode);
+
+		while (!nodeList.empty()) {
+			node = nodeList.top();
+			color[node] = "gray";
+			nodeList.pop();
+			for (auto neighbor: graph[node])
+				if (color[neighbor] == "white") {
+					nodeList.push(neighbor);
+					path[neighbor] = node;
+					totalMarquet++;
+				}
+			color[node] = "black";
+		}
+		return totalMarquet;
+	}
+	```
+
+	* Build Path
+
+	```c++
+	ll longPath(vector<ll> path, ll endNode) {
+		ll answer = 0;
+		ll currentNode = endNode;
+		while (path[currentNode] != -1) {
+			cout << currentNode << ' ';
+			currentNode = path[currentNode];
+			answer++;
+
+		}
+		cout << currentNode << '\n';
+		return answer;
+	}
+	```
+
+	* For test
+
+	```c++
+	// int main
+	ll n, l, r, initNode;
+    cin >> n >> initNode;
+    vector<vi> graph(n, vi());
+    vector<string> color(n, "white");
+    vector<ll> path(n);
+    path[initNode] = -1;
+    while (n) {
+        n--;
+        cin >> l >> r;
+        graph[l].push_back(r);
+    }
+
+    cout << dfs(graph, color, path, initNode) << '\n';
+    for (ll i = 0; i < (ll)path.size(); i++)
+        cout << i << ' ' << path[i] << '\n';
+
+    cout << '\n';
+    cout << longPath(path, 4) << '\n';
+	```
+
+	* test case
+
+	```
+		7 0
+		0 1
+		1 4
+		3 4
+		0 3
+		0 2
+		5 6
+	```
