@@ -13,7 +13,8 @@ using namespace std;
 typedef long long ll;
 typedef vector<ll> vi;
 typedef pair<ll,ll> pii;
-typedef pair<pii> vii;
+typedef vector<pii> vii;
+const ll INF = numeric_limits<ll>::max();
 
 
 int main()
@@ -329,52 +330,58 @@ ll lcd(ll a, ll b) {
 * Union-Find Disjoint Sets
 
 ```c++
-class UnionFind
-{
+class UnionFind {
 private:
-    vi p, rank;
+    vi parent;
+    vi heigth;
+
 public:
-    UnionFind(ll n) {
-        p.assign(n, 0);
-        rank.assign(n, 0);
-        for(ll i = 0; i < n; i++)
-            p[i] = i;
+    UnionFind (ll n) {
+        parent = vi(n);
+        heigth = vi(n, 1);
+        for (ll i = 0; i < n; i++)
+            parent[i] = i;
     }
 
-    int findSet(ll i) {
-        if(i == p[i])
-            return i;
-        else {
-            p[i] = findSet(p[i]);
-            return p[i];
+    ll findSet(ll p) {
+        ll root = p, aux;
+        while (root != parent[root])
+            root = parent[root];
+        while (p != root) {
+            aux = parent[p];
+            parent[p] = root;
+            p = aux;
         }
+        return root;
     }
 
-    bool isSameSet(ll i, ll j) {
-        return findSet(i) == findSet(j);
+    bool isSameSet(ll p, ll q) {
+        return findSet(p) == findSet(q);
     }
 
-    void unionSet(ll i, ll j)
-    {
-        if(!isSameSet(i, j)) {
-            int x = findSet(i), y = findSet(j);
-            if(rank[x] > rank[y])
-                p[y] = x;
-            else {
-                p[x] = y;
-                if(rank[x] == rank[y])
-                    rank[y]++;
-            }
+    void unionSet(ll p, ll q) {
+        ll rootP = findSet(p);
+        ll rootQ = findSet(q);
+        if (rootP == rootQ)
+            return;
+        if (heigth[rootP] < heigth[rootQ])
+            parent[rootP] = rootQ;
+        else {
+            parent[rootQ] = rootP;
+            if (heigth[rootP] == heigth[rootQ])
+                heigth[rootP]++;
         }
     }
 };
 ```
 
+* Segment Tree
+* Binary Indexed (Fenwick) Tree
 
-# Graph
 
-* **Depth first search:** Return the number of component conected. It is important fill the `color` with
-"white"
+## Graph
+
+* **Depth first search:** Return the number of component conected. It is important fill the `color` with "white"
 
 	* Recursive
 
@@ -396,20 +403,21 @@ public:
 	* Iterative
 
 	```c++
-
 	ll dfs (vector<vi> graph, vector<string> &color, vector<ll> &path, ll initNode) {
-		ll node, totalMarquet = 1;
+
+        ll node, totalMarquet = 1;
 		stack<ll> nodeList;
 		nodeList.push(initNode);
+        color[node] = "gray";
 
 		while (!nodeList.empty()) {
 			node = nodeList.top();
-			color[node] = "gray";
 			nodeList.pop();
 			for (auto neighbor: graph[node])
 				if (color[neighbor] == "white") {
 					nodeList.push(neighbor);
 					path[neighbor] = node;
+        			color[node] = "gray";
 					totalMarquet++;
 				}
 			color[node] = "black";
@@ -470,3 +478,5 @@ public:
 		0 2
 		5 6
 	```
+
+* **Breath first search:**
