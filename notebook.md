@@ -443,40 +443,169 @@ public:
 	}
 	```
 
-	* For test
+* **Breath first search:**
 
-	```c++
-	// int main
-	ll n, l, r, initNode;
-    cin >> n >> initNode;
-    vector<vi> graph(n, vi());
-    vector<string> color(n, "white");
-    vector<ll> path(n);
+
+
+```c++
+ll bfs (vector<vi> graph, vector<string> &color, vector<ll> &path, vector<ll> &depth, ll initNode){
+
+    ll node, totalMarquet = 1;
+    depth[initNode] = 0;
     path[initNode] = -1;
-    while (n) {
-        n--;
-        cin >> l >> r;
-        graph[l].push_back(r);
+    color[initNode] = "gray";
+    queue<ll> nodeList;
+    nodeList.push(initNode);
+
+    while (!nodeList.empty()) {
+        node = nodeList.front();
+        nodeList.pop();
+        for (auto neighbor: graph[node])
+            if (color[neighbor] == "white") {
+                color[neighbor] = "gray";
+                nodeList.push(neighbor);
+                path[neighbor] = node;
+                depth[neighbor] = depth[node] + 1;
+                totalMarquet++;
+            }
+        color[node] = "black";
+    }
+    return totalMarquet;
+}
+```
+
+For test
+
+```c++
+ll n, m, l, r, initNode;
+cin >> n >> m >> initNode;
+vector<vi> graph(n, vi());
+vector<string> color(n, "white");
+vector<ll> depth(n, INF);
+vector<ll> path(n);
+path[initNode] = -1;
+while (m --> 0) {
+    cin >> l >> r;
+    graph[l].push_back(r);
+}
+
+ll answer = bfs(graph, color, path, depth, initNode);
+cout << answer << endl;
+for (ll i = 0; i < n; i++) {
+    cout << i << ' ';
+    if (depth[i] == INF)
+        cout << "inf";
+    else
+        cout << depth[i];
+    cout << endl;
+}
+cout << endl;
+```
+
+* test case
+
+```
+11
+0 0
+1 1
+2 2
+3 2
+4 3
+5 2
+6 2
+7 2
+8 1
+9 3
+10 3
+```
+
+# Heap
+
+```c++
+class MaxHeap {
+private:
+    ll *heap;
+    ll size, scope;
+public:
+    MaxHeap(ll n = 10) {
+        heap = new ll[n];
+        size = 0;
+        scope = n;
     }
 
-    cout << dfs(graph, color, path, initNode) << '\n';
-    for (ll i = 0; i < (ll)path.size(); i++)
-        cout << i << ' ' << path[i] << '\n';
+    bool empty() {
+        return size == 0;
+    }
 
-    cout << '\n';
-    cout << longPath(path, 4) << '\n';
-	```
+    ll getMax() {
+        return heap[1];
+    }
 
-	* test case
+    void push(ll theElement) {
+        if (size + 1 == scope) {
+            ll *auxHeap = heap;
+            scope = size * 2;
+            heap = new ll[scope];
+            for (ll i = 1; i <= size; i++)
+                heap[i] = auxHeap[i];
+            delete[] auxHeap;
+        }
 
-	```
-		7 0
-		0 1
-		1 4
-		3 4
-		0 3
-		0 2
-		5 6
-	```
+        ll currentNode = ++size;
+        while (currentNode != 1 && heap[currentNode / 2] < theElement) {
+            heap[currentNode] = heap[currentNode / 2];
+            currentNode /= 2;
+        }
+        heap[currentNode] = theElement;
+    }
 
-* **Breath first search:**
+    ll remove(ll theElement) {
+
+        ll maxElement = heap[1];
+        ll lastElement = heap[size++];
+        ll currentNode = 1, child = 2;
+        while (child <= size) {
+            if (child < size && heap[child] < heap[child + 1])
+                child++;
+
+            if (lastElement >= heap[child])
+                break;
+
+            heap[currentNode] = heap[child];
+            currentNode = child;
+            child *= 2;
+        }
+
+        heap[currentNode] = lastElement;
+        return maxElement;
+    }
+
+    void initialize(ll *theHeap, ll theHeapSize) {
+
+        size = theHeapSize;
+        if (scope < size + 1)
+            heap = new ll[size + 1];
+        for (ll i = 1; i <= size; i++)
+            heap[i] = theHeap[i - 1];
+
+        ll rootElement, child;
+        for (ll root = size / 2; root >= 1; root--) {
+            rootElement = heap[root];
+            child = 2 * root;
+
+            while (child <= size) {
+                if (child < size && heap[child] < heap[child + 1])
+                    child++;
+
+                if (rootElement >= heap[child])
+                    break;
+
+                heap[child / 2] = heap[child];
+                child *= 2;
+            }
+
+            heap[child / 2] = rootElement;
+        }
+    }
+};
+```
