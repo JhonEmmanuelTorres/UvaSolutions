@@ -1,3 +1,1 @@
-# UvaSolutions
-
-In this space are the uva solution with your number problem
+Solution of any programming's judges
